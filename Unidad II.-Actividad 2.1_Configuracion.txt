@@ -1,0 +1,80 @@
+***Configuración de Switch 1 (S1)***
+
+---Crear las VLANs 10 y 20--
+Switch>ena
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname S1
+S1(config)#vlan 10
+S1(config-vlan)#name SISTEMAS
+S1(config-vlan)#exit
+S1(config)#vlan 20
+S1(config-vlan)#SOFTWARE
+                ^
+% Invalid input detected at '^' marker.
+	
+S1(config-vlan)#name SOFTWARE
+S1(config-vlan)#exit
+
+---Asignar los puertos a las VLANs correspondientes---
+VLAN 10 (SISTEMAS)
+S1(config)#Interface range fa0/2-10
+S1(config-if-range)#Switch
+S1(config-if-range)#Switchport mode access
+S1(config-if-range)#Switchport access vlan 10
+S1(config-if-range)#exit
+
+VLAN 20 (SOFTWARE)
+S1(config)#Interface range fa0/11-20
+S1(config-if-range)#Switchport mode access
+S1(config-if-range)#Switchport access vlan 20
+S1(config-if-range)#exit
+
+---Configurar el puerto troncal hacia S2---
+S1(config)#Inter
+S1(config)#Interface g0/1
+S1(config-if)#Switch
+S1(config-if)#Switchport mode trunk
+
+S1(config-if)#
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to down
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up
+
+S1(config-if)#Switchport trunk allowed vlan 10,20
+S1(config-if)#exit
+
+***Configuración de Switch 2 (S2)***
+
+---Crear las VLANs 10 y 20--
+Switch>ena
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname S2
+S2(config)#vlan 10
+S2(config-vlan)#name SISTEMAS
+S2(config-vlan)#exit
+S2(config)#vlan 20	
+S2(config-vlan)#name SOFTWARE
+S2(config-vlan)#exit
+
+---Asignar los puertos a las VLANs correspondientes---
+VLAN 10 (SISTEMAS)
+S2(config)#Inter
+S2(config)#Interface range fa0/2-10
+S2(config-if-range)#Swit
+S2(config-if-range)#Switchport mode access
+S2(config-if-range)#Switchport access vlan 10
+S2(config-if-range)#exit
+
+VLAN 20 (SOFTWARE)
+S2(config)#Interface range fa0/11-20
+S2(config-if-range)#Switchport mode access
+S2(config-if-range)#Switchport access vlan 20
+
+---Configurar el puerto troncal hacia S1---
+S2(config)#Interface g0/1
+S2(config-if)#Switch
+S2(config-if)#Switchport mode trunk
+S2(config-if)#Switchport trunk allowed vlan 10,20
+S2(config-if)#exit
