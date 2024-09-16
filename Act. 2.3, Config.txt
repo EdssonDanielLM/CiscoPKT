@@ -1,0 +1,134 @@
+***Switch***
+
+--creamos vlan--
+
+Switch(config)#vlan 10
+Switch(config-vlan)#name VLAN10
+Switch(config-vlan)#exit
+Switch(config)#vlan 20
+Switch(config-vlan)#name VLAN20
+Switch(config-vlan)#exit
+Switch(config)#vlan 30
+Switch(config-vlan)#name VLAN30
+Switch(config-vlan)#exit
+Switch(config)#
+Switch(config)#do wr
+
+--Asignar puertos a las VLANs--
+
+Switch(config)#interface range fa0/2-3
+Switch(config-if-range)#switcg
+Switch(config-if-range)#switc
+Switch(config-if-range)#switchport mode access
+Switch(config-if-range)#switchport access vlan 10
+Switch(config-if-range)#exit
+Switch(config)#interface range fa0/4-5
+Switch(config-if-range)#switchport mode access
+Switch(config-if-range)#switchport access vlan 20
+Switch(config-if-range)#exit
+Switch(config)#
+Switch(config)#interface range fa0/6-7
+Switch(config-if-range)#switchport mode access
+Switch(config-if-range)#switchport access vlan 30
+Switch(config-if-range)#exit
+Switch(config)#do wr
+
+--Configurar las interfaces SVI--
+
+Switch(config)#interface vlan 10
+Switch(config-if)#
+%LINK-5-CHANGED: Interface Vlan10, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan10, changed state to up
+
+Switch(config-if)#ip a
+Switch(config-if)#ip address 192.168.60.1 255.255.255.0
+Switch(config-if)#no sh
+Switch(config-if)#no shutdown 
+Switch(config-if)#exit
+Switch(config)#interface vlan 20
+Switch(config-if)#
+%LINK-5-CHANGED: Interface Vlan20, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan20, changed state to up
+
+Switch(config-if)#ip address 192.168.61.1 255.255.255.0
+Switch(config-if)#no shutdown 
+Switch(config-if)#exit
+Switch(config)#interface vlan 30
+Switch(config-if)#
+%LINK-5-CHANGED: Interface Vlan30, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan30, changed state to up
+
+Switch(config-if)#ip address 192.168.62.1 255.255.255.0
+Switch(config-if)#no shutdown 
+Switch(config-if)#exit
+
+--Configurar los Pools DHCP en el Switch--
+
+Switch(config)#ip dhcp pool VLAN10
+Switch(dhcp-config)#netw
+Switch(dhcp-config)#network 192.168.60.0 255.255.255.0
+Switch(dhcp-config)#def
+Switch(dhcp-config)#default-router 192.168.60.1
+Switch(dhcp-config)#dns
+Switch(dhcp-config)#dns-server 8.8.8.8
+Switch(dhcp-config)#exit
+Switch(config)#ip dhcp pool VLAN20
+Switch(dhcp-config)#network 192.168.61.0 255.255.255.0
+Switch(dhcp-config)#default-router 192.168.61.1
+Switch(dhcp-config)#dns-server 8.8.8.8
+Switch(dhcp-config)#exit
+Switch(config)#ip dhcp pool VLAN30
+Switch(dhcp-config)#network 192.168.62.0 255.255.255.0
+Switch(dhcp-config)#default-router 192.168.62.1
+Switch(dhcp-config)#dns-server 8.8.8.8
+Switch(dhcp-config)#exit
+
+--Configurar Trunk entre Router y Switch--
+
+Switch(config)#interface gigabitEthernet 0/1
+Switch(config-if)#swit
+Switch(config-if)#switchport mode trunk
+Switch(config-if)#exit
+Switch(config)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/1, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up
+
+***Router***
+
+--encapsulamiento--
+
+Router(config)#interface gigabitEthernet 0/0
+Router(config-if)#interfa
+Router(config-if)#inter
+Router(config-if)#interface gig
+Router(config-if)#interface gigabitEthernet 0/0.10
+Router(config-subif)#encap
+Router(config-subif)#encapsulation do
+Router(config-subif)#encapsulation dot1Q 10
+Router(config-subif)#ip add
+Router(config-subif)#ip address 192.168.60.1 255.255.255.0
+Router(config-subif)#exit
+Router(config)#
+Router(config)#interface gigabitEthernet 0/0.20
+Router(config-subif)#encapsulation dot1Q 20
+Router(config-subif)#ip address 192.168.61.1 255.255.255.0
+Router(config-subif)#exkit
+                       ^
+% Invalid input detected at '^' marker.
+	
+Router(config-subif)#exit
+Router(config)#interface gigabitEthernet 0/0.30
+Router(config-subif)#encapsulation dot1Q 30
+Router(config-subif)#ip address 192.168.62.1 255.255.255.0
+Router(config-subif)#exit
+Router(config)#do wr
+
+--levantamos router--
+
+Router(config)#interface gig
+Router(config)#interface gigabitEthernet 0/0
+Router(config-if)#no sh
