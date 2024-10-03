@@ -1,0 +1,145 @@
+**switch1**
+--creamos vlan--
+
+Switch>ena
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#vlan 50
+Switch(config-vlan)#name LIDTS-VTP
+Switch(config-vlan)#exit
+
+**switch0**
+--trunkamos--
+Switch>ena 
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#inter
+Switch(config)#interface fas
+Switch(config)#interface fastEthernet 0/24
+Switch(config-if)#swit
+Switch(config-if)#switchport mo
+Switch(config-if)#switchport mode acc
+Switch(config-if)#switchport mode tr
+Switch(config-if)#switchport mode trunk 
+Switch(config-if)#exit
+
+**Switch1**
+--creamos vtp client--
+Switch(config)#vtp mode client
+Setting device to VTP CLIENT mode.
+Switch(config)#vtp domain UNACH
+Changing VTP domain name from NULL to UNACH
+Switch(config)#exit
+
+**Sitch0**
+--creamos vtp server--
+Switch(config)#vtp mode server
+Device mode already VTP SERVER.
+Switch(config)#vtp domain UNACH
+Changing VTP domain name from NULL to UNACH
+Switch(config)#exit
+
+--creamos vlans--
+Switch(config)#vlan 10
+Switch(config-vlan)#name SISTEMAS
+Switch(config-vlan)#exit
+Switch(config)#vlan 20
+Switch(config-vlan)#name SOFTWARE
+Switch(config-vlan)#exit
+Switch(config)#vlan 30
+Switch(config-vlan)#name COMPUTO
+Switch(config-vlan)#exit
+
+Switch#sh vlan ;; comprobamos las vlans creadas 
+
+**Switch1**
+Switch#sh vlan ;; comprobamos las vlans creadas y aparecerán las vlans que se crearon en el switch0 ya que pasan las vilans por el switch atreves del VTP 
+
+**Sitch0**
+--asignamos vlans--
+Switch(config)#interface fastEthernet 0/10
+Switch(config-if)#switchport Access vlan 10
+Switch(config-if)#exit
+Switch(config)#interface fastEthernet 0/11
+Switch(config-if)#switchport Access vlan 20
+Switch(config-if)#exit
+Switch(config)#interface fastEthernet 0/12
+Switch(config-if)#switchport Access vlan 30
+Switch(config-if)#exit
+
+**Sitch1**
+--asignamos vlans--
+Switch(config)#interface fastEthernet 0/10
+Switch(config-if)#switchport Access vlan 10
+Switch(config-if)#exit
+Switch(config)#interface fastEthernet 0/11
+Switch(config-if)#switchport Access vlan 20
+Switch(config-if)#exit
+Switch(config)#interface fastEthernet 0/12
+Switch(config-if)#switchport Access vlan 30
+Switch(config-if)#exit
+
+**Switch0**
+--trunkamos el router--
+Switch>ena 
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#inter
+Switch(config)#interface fas
+Switch(config)#interface fastEthernet 0/1
+Switch(config-if)#swit
+Switch(config-if)#switchport mo
+Switch(config-if)#switchport mode tr
+Switch(config-if)#switchport mode trunk 
+Switch(config-if)#exit
+
+**Router**
+--levantamos el router--
+Router>ena
+Router#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#inter
+Router(config)#interface fas
+Router(config)#interface fastEthernet 0/0
+Router(config-if)#no sh
+
+--encapsulamiento--
+Router(config)#interfa
+Router(config)#interface fas
+Router(config)#interface fastEthernet 0/0.10
+Router(config-subif)#
+%LINK-5-CHANGED: Interface FastEthernet0/0.10, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/0.10, changed state to up
+
+Router(config-subif)#encap
+Router(config-subif)#encapsulation do
+Router(config-subif)#encapsulation dot1Q 10
+Router(config-subif)#ip ad
+Router(config-subif)#ip address 192.168.10.1 255.255.255.0
+Router(config-subif)#exit
+Router(config)#interface fastEthernet 0/0.20
+Router(config-subif)#
+%LINK-5-CHANGED: Interface FastEthernet0/0.20, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/0.20, changed state to up
+
+Router(config-subif)#encap
+Router(config-subif)#encapsulation dot
+Router(config-subif)#encapsulation dot1Q 20
+Router(config-subif)#ip add
+Router(config-subif)#ip address 192.168.20.1 255.255.255.0
+Router(config-subif)#exit
+Router(config)#interface fastEthernet 0/0.30
+Router(config-subif)#
+%LINK-5-CHANGED: Interface FastEthernet0/0.30, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/0.30, changed state to up
+
+Router(config-subif)#encap
+Router(config-subif)#encapsulation do
+Router(config-subif)#encapsulation dot1Q 30
+Router(config-subif)#ip add
+Router(config-subif)#ip address 192.168.30.1 255.255.255.0
+Router(config-subif)#exit
+Router(config)#exit
