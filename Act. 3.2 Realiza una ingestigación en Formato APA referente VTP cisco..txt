@@ -1,0 +1,312 @@
+#TAREA 1
+**Configure el nombre de host del switch como se indica en la topología.**
+
+--S1--
+Switch>ena
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname S1
+
+--S2--
+Switch>ena
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname S2
+
+--S3--
+Switch>ena
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname S3
+
+**Deshabilite la búsqueda DNS.**
+
+--S1--
+S1(config)#no ip domain-lookup
+
+--S2--
+S2(config)#no ip domain-lookup
+
+--S3--
+S3(config)#no ip domain-lookup
+
+**Configure una contraseña de class en el modo EXEC privilegiado encriptado.**
+
+--S1--
+S1(config)#enable secret class 
+
+--S2--
+S2(config)#enable secret class 
+
+--S3--
+S3(config)#enable secret class 
+
+**Configure una contraseña de cisco para las conexiones de consola y vty.**
+
+--S1--
+S1(config)#line console 0
+S1(config-line)#pass
+S1(config-line)#password cisco
+S1(config-line)#login
+
+--S2--
+S2(config)#line console 0
+S2(config-line)#pass
+S2(config-line)#password cisco
+S2(config-line)#login
+
+--S3--
+S3(config)#line console 0
+S3(config-line)#pass
+S3(config-line)#password cisco
+S3(config-line)#login
+
+#TAREA 2
+Configure las interfaces Ethernet de PC1, PC2, PC3, PC4, PC5 y PC6 con las direcciones IP indicadas en la tabla de direccionamiento. Las configuraciones de gateway predeterminado no son necesarias para esta actividad.
+
+Para esto desde Desktop, seleccione IP Configuration para configurar las interfaces Ethernet de los seis equipos PC con las direcciones IP y los gateways predeterminados que se indican en la tabla de direccionamiento, ubicada después del diagrama de topología.
+
+#TAREA 3
+**Paso 1: Verifique las configuraciones VTP actuales de los tres switches, con el comando show vtp satus.**
+
+**Paso 2: Configure el modo operativo, el nombre del dominio y la contraseña VTP de los tres switches.**
+(Establezca access como nombre de dominio VTP y lab4 como contraseña en los tres switches).
+
+--S1-- (Configure el S1 en modo servidor)
+S1(config)#vtp mode server
+Device mode already VTP SERVER.
+S1(config)#vtp domain access
+Changing VTP domain name from NULL to access
+S1(config)#vtp password lab4
+Setting device VLAN database password to lab4
+S1(config)#end
+
+--S2-- (Configure el S2 en modo cliente)
+S2(config)#vtp mode client
+Setting device to VTP CLIENT mode.
+S2(config)#vtp domain access
+Changing VTP domain name from NULL to access
+S2(config)#vtp password lab4
+Setting device VLAN database password to lab4
+S2(config)#end
+
+--S3-- (Configure el S3 en modo transparente)
+S3(config)#vtp mode transparent 
+Setting device to VTP TRANSPARENT mode.
+S3(config)#vtp domain access
+Changing VTP domain name from NULL to access
+S3(config)#vtp password lab4
+Setting device VLAN database password to lab4
+
+**Paso 3: Configure el enlace troncal y la VLAN nativa para los puertos del enlace troncal de los tres switches.**
+(En todos los switches, configure la VLAN troncal y nativa para las interfaces FastEthernet 0/1-5).
+
+--S1--
+S1(config)#interface range fa0/1-5
+S1(config-if-range)#swit
+S1(config-if-range)#switchport mode trunk
+
+
+S1(config-if-range)#
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/1, changed state to down
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/1, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/2, changed state to down
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/2, changed state to up
+
+S1(config-if-range)#switc
+S1(config-if-range)#switchport trunk native vlan 199
+S1(config-if-range)#no sh
+
+--S2--
+S2(config)#interface range fa0/1-5
+S2(config-if-range)#swit
+S2(config-if-range)#switchport mode trunk
+S2(config-if-range)#switch
+S2(config-if-range)#switchport trunk native vlan 199
+S2(config-if-range)#no sh 
+S2(config-if-range)#end
+
+--S3--
+S3(config)#interface range fa0/1-5
+S3(config-if-range)#swit
+S3(config-if-range)#switchport mode trunk 
+S3(config-if-range)#swit
+S3(config-if-range)#switchport trunk native vlan 199
+S3(config-if-range)#no sh
+S3(config-if-range)#end
+
+**Paso 4. Configure la seguridad del puerto en los switches S2 y S3 de la capa de acceso.**
+(Configure los puertos Fa0/6, Fa0/11 y Fa0/18 en S2 y S3 para permitir la conexión de un máximo
+de dos hosts a estos puertos y para que adquieran las direcciones MAC de los hosts de manera
+dinámica)
+
+--S2--
+S2(config)#inter fa0/6
+S2(config-if)#swit
+S2(config-if)#switchport port-se
+S2(config-if)#switchport port-security 
+Command rejected: FastEthernet0/6 is a dynamic port.
+S2(config-if)#switc
+S2(config-if)#switchport port-security maxi
+S2(config-if)#switchport port-security maximum 2
+S2(config-if)#switchport port-security mac-add
+S2(config-if)#switchport port-security mac-address sti
+S2(config-if)#switchport port-security mac-address sticky 
+S2(config-if)#interf
+S2(config-if)#interfa
+S2(config-if)#interface fa0/11
+S2(config-if)#switchport port-security 
+Command rejected: FastEthernet0/11 is a dynamic port.
+S2(config-if)#switchport port-security maximum 2
+S2(config-if)#switchport port-security mac-address sticky 
+S2(config-if)#interface fa0/18
+S2(config-if)#switchport port-security 
+Command rejected: FastEthernet0/18 is a dynamic port.
+S2(config-if)#switchport port-security maximum 2
+S2(config-if)#switchport port-security mac-address sticky 
+S2(config-if)#end 
+
+--S3--
+S3(config)#interface fa0/6
+S3(config-if)#switch
+S3(config-if)#switchport port-se
+S3(config-if)#switchport port-security 
+Command rejected: FastEthernet0/6 is a dynamic port.
+S3(config-if)#switchport port-security maxi
+S3(config-if)#switchport port-security maximum 2
+S3(config-if)#switchport port-security mac-add
+S3(config-if)#switchport port-security mac-address st
+S3(config-if)#switchport port-security mac-address sticky 
+S3(config-if)#interface fa0/11
+S3(config-if)#switchport port-security 
+Command rejected: FastEthernet0/11 is a dynamic port.
+S3(config-if)#switchport port-security maximum 2
+S3(config-if)#switchport port-security mac-address sticky 
+S3(config-if)#interface fa0/18
+S3(config-if)#switchport port-security 
+Command rejected: FastEthernet0/18 is a dynamic port.
+S3(config-if)#switchport port-security maximum 2
+S3(config-if)#switchport port-security mac-address sticky 
+S3(config-if)#end
+
+**Paso 5. Configure las VLAN en el servidor VTP.**
+• VLAN 99 ADMON
+• VLAN 10 SISTEMAS
+• VLAN 20 LIDTS
+• VLAN 30 CONTADURIA
+
+--S1--
+S1(config)#vlan 199
+S1(config-vlan)#name ADMON
+S1(config-vlan)#exit
+S1(config)#vlan 10
+S1(config-vlan)#name SISTEMAS
+S1(config-vlan)#exit
+S1(config)#vlan 20
+S1(config-vlan)#name LIDTS
+S1(config-vlan)#exit
+S1(config)#vlan 30
+S1(config-vlan)#name CONTADURIA
+S1(config-vlan)#exit
+
+**Paso 6: Verifique si las VLAN que se crearon en S1 se distribuyeron a S2 y S3.**
+comando show vlan
+--S1--
+S1#sh vlan
+
+**Paso 7. Configure la dirección de interfaz de administración en los tres switches**
+Antes de continuar, cambie el modo VTP en S3 a cliente. A continuación, verifique que S3 reciba las configuraciones VLAN de S1 a través de VTP.
+
+--S3-- (Configure el S3 en modo cliente)
+S3(config)#vtp mode client
+Setting device to VTP CLIENT mode.
+S3(config)#vtp domain access
+Domain name already set to access.
+S3(config)#vtp password lab4
+Password already set to lab4
+S3(config)#end
+
+#Configure los tres switches con las direcciones IP
+--S1--
+S1(config)#interface vlan 199
+S1(config-if)#
+%LINK-5-CHANGED: Interface Vlan199, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan199, changed state to up
+
+S1(config-if)#ip add
+S1(config-if)#ip address 172.17.199.11 255.255.255.0
+S1(config-if)#no sh
+
+--S2--
+S2(config)#interface vlan 199
+S2(config-if)#
+%LINK-5-CHANGED: Interface Vlan199, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan199, changed state to up
+
+S2(config-if)#ip add
+S2(config-if)#ip address 172.17.199.12 255.255.255.0
+S2(config-if)#no sh
+
+--S3--
+S3(config)#interface vlan 199
+S3(config-if)#
+%LINK-5-CHANGED: Interface Vlan199, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan199, changed state to up
+
+S3(config-if)#ip add
+S3(config-if)#ip address 172.17.199.13 255.255.255.0
+S3(config-if)#no sh
+
+#Hacer ping entre switches
+--S1-- (ping al S2 y S3)
+S1#ping 172.17.199.12
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 172.17.199.12, timeout is 2 seconds:
+..!!!
+Success rate is 60 percent (3/5), round-trip min/avg/max = 0/0/0 ms
+
+S1#ping 172.17.199.13
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 172.17.199.13, timeout is 2 seconds:
+..!!!
+Success rate is 60 percent (3/5), round-trip min/avg/max = 0/0/0 ms
+
+--S2-- (ping al S3)
+S2#ping 172.17.199.13
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 172.17.199.13, timeout is 2 seconds:
+..!!!
+Success rate is 60 percent (3/5), round-trip min/avg/max = 0/0/0 ms
+
+
+**Paso 8: Asigne puertos de switch a las VLAN.**
+--S2--
+S2(config)#interface range fa0/6 - fa0/10
+S2(config-if-range)#switch
+S2(config-if-range)#switchport access vlan 30
+S2(config-if-range)#interface range fa0/11 - fa0/17
+S2(config-if-range)#switchport access vlan 10
+S2(config-if-range)#interface range fa0/18 - fa0/24
+S2(config-if-range)#switchport access vlan 20
+S2(config-if-range)#end
+
+--S3--
+S3(config)#interface range fa0/6 - fa0/10
+S3(config-if-range)#switc
+S3(config-if-range)#switchport acce
+S3(config-if-range)#switchport access vlan 30
+S3(config-if-range)#interface range fa0/11 - fa0/17
+S3(config-if-range)#switchport access vlan 10
+S3(config-if-range)#interface range fa0/18 - fa0/24
+S3(config-if-range)#switchport access vlan 20
+S3(config-if-range)#end
+
